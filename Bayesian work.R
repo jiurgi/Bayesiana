@@ -8,9 +8,14 @@ as.factor(datos$RVE5)
 
 
 barplot(datos$RVE5, datos$CS2)
+library(rstan)
+library(StanHeaders)
+library(ggplot2)
 
 
-'''library(rstan)
+
+'''
+library(rstan)
 
 
 
@@ -62,4 +67,15 @@ ajuste <- stan(model_code = modelo,
 
 print(ajuste)'''
 
+library(rstan)
+library(StanHeaders)
+library(ggplot2)
+x <- c(1, 2, 3, 4, 5)
+y <- c(2, 4, 6, 8, 10)
 
+
+
+stan_data <- list(N = length(x), x = x, y = y)
+model <- stan("modelo.stan")
+
+fit <- sampling(model, data = list(N = length(x), x = x, y = y), iter = 2000, chains = 4)
