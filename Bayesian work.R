@@ -13,6 +13,37 @@ library(StanHeaders)
 library(ggplot2)
 
 
+Comuna <- datos$Q6
+Sexo <- datos$CS1
+Edad <- datos$CS2
+Estrato <- datos$CCS2
+Vulnerabilidad <- datos$RVE5
+
+# Resumen estadístico
+summary(Edad)   # Resumen de la variable Edad
+
+# Distribución de frecuencia
+table(Comuna)   # Tabla de frecuencia de la variable Comuna
+table(Sexo)     # Tabla de frecuencia de la variable Sexo
+table(Estrato)  # Tabla de frecuencia de la variable Estrato
+table(Vulnerabilidad)  # Tabla de frecuencia de la variable Vulnerabilidad
+
+# Gráficos
+barplot(table(Comuna))   # Gráfico de barras para la variable Comuna
+pie(table(Sexo))         # Gráfico de sectores para la variable Sexo
+hist(Edad)               # Histograma para la variable Edad
+
+# Análisis comparativo
+table(Comuna, Sexo)   # Tabla de contingencia entre Comuna y Sexo
+table(Estrato, Vulnerabilidad)   # Tabla de contingencia entre Estrato y Vulnerabilidad
+
+# Conclusiones y hallazgos
+# En esta sección puedes escribir tus observaciones y conclusiones basadas en los resultados obtenidos, por ejemplo:
+# - La variable Edad tiene una media de 46.71 años y una desviación estándar de 18.05 años.
+# - La Comuna 14 tiene el mayor número de observaciones, seguida por la Comuna 7 y 15.
+# - Se observa una asociación entre el Estrato y la Vulnerabilidad, con un mayor porcentaje de personas vulnerables en el Estrato bajo.
+
+
 
 '''
 library(rstan)
