@@ -43,7 +43,59 @@ table(Estrato, Vulnerabilidad)   # Tabla de contingencia entre Estrato y Vulnera
 # - La Comuna 14 tiene el mayor número de observaciones, seguida por la Comuna 7 y 15.
 # - Se observa una asociación entre el Estrato y la Vulnerabilidad, con un mayor porcentaje de personas vulnerables en el Estrato bajo.
 
+## Otros graficos:
+ggplot(datos, aes(x = Edad, fill = as.factor(Vulnerabilidad))) +
+  geom_density(alpha = 0.5) +
+  labs(title = "Distribución de Edad según Vulnerabilidad", x = "Edad", y = "Densidad") +
+  scale_fill_discrete(name = "Vulnerabilidad", labels = c("Sí","No"))
 
+
+ggplot(datos, aes(fill=as.factor(Vulnerabilidad), y=Edad, x=Estrato)) + 
+  geom_bar(position="fill", stat="identity")
+
+
+# Visualización de la distribución de la variable Comuna según la Vulnerabilidad
+ggplot(datos, aes(x = factor(Comuna))) +
+  geom_bar(aes(fill = factor(Vulnerabilidad))) +
+  labs(x = "Comuna", y = "Frecuencia", fill = "Vulnerabilidad") +
+  ggtitle("Distribución de Comuna según Vulnerabilidad") +
+  scale_fill_discrete(name = "Vulnerabilidad", labels = c("Sí","No"))
+
+# Visualización de la distribución de la variable Edad según la Vulnerabilidad
+ggplot(datos, aes(x = Edad)) +
+  geom_histogram(aes(fill = factor(Vulnerabilidad)), color = "black", bins = 20) +
+  labs(x = "Edad", y = "Frecuencia", fill = "Vulnerabilidad") +
+  ggtitle("Distribución de Edad según Vulnerabilidad") +
+  scale_fill_discrete(name = "Vulnerabilidad", labels = c("Sí","No"))
+
+# Visualización de la distribución de la variable Estrato según la Vulnerabilidad
+ggplot(datos, aes(x = factor(Estrato))) +
+  geom_bar(aes(fill = factor(Vulnerabilidad))) +
+  labs(x = "Estrato Socioeconómico", y = "Frecuencia", fill = "Vulnerabilidad") +
+  ggtitle("Distribución de Estrato Socioeconómico según Vulnerabilidad") +
+  scale_fill_discrete(name = "Vulnerabilidad", labels = c("Sí","No"))
+
+# Visualización de la distribución de la variable Sexo según la Vulnerabilidad
+ggplot(datos, aes(x = factor(Sexo))) +
+  geom_bar(aes(fill = factor(Vulnerabilidad))) +
+  labs(x = "Sexo", y = "Frecuencia", fill = "Vulnerabilidad") +
+  ggtitle("Distribución de Sexo según Vulnerabilidad") +
+  scale_fill_discrete(name = "Vulnerabilidad", labels = c("Sí","No"))
+
+
+# Definir los límites de los rangos de edad
+edades <- seq(18, 92, by = 10)
+etiquetas_edades <- paste(edades, edades + 9, sep = "-")
+
+# Crear una nueva variable que represente los rangos de edad
+datos$rango_edad <- cut(Edad, breaks = c(edades, Inf), labels = etiquetas_edades, include.lowest = TRUE)
+
+# Visualización de la distribución de la variable Edad por rangos
+ggplot(datos, aes(x = rango_edad)) +
+  geom_bar(fill = "darkblue", color = "black") +
+  labs(x = "Rangos de Edad", y = "Frecuencia") +
+  ggtitle("Distribución de Edad por Rangos") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 
 '''
 library(rstan)
