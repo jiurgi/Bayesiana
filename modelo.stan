@@ -1,16 +1,20 @@
 data {
   int<lower=0> N; // Número de observaciones
-  vector[N] x;    // Variable independiente
-  vector[N] y;    // Variable dependiente
+  int<lower=0> K; // Número de variables predictoras
+  matrix[N, K] X; // Matriz de variables predictoras
+  int<lower=0, upper=1> y[N]; // Variable respuesta binaria
 }
 
 parameters {
-  real alpha;     // Término de intersección
-  real beta;      // Término de pendiente
-  real<lower=0> sigma;  // Desviación estándar
+  vector[K] beta; // Coeficientes de regresión
 }
 
 model {
-  y ~ normal(alpha + beta * x, sigma);  // Modelo lineal
-}
+  // Prior
+  beta ~ normal(0, 5); // Prior normal para los coeficientes
 
+  // Likelihood
+  for (i in 1:N) {
+    y[i] ~ bernoulli_logit(X[i,] * beta); // Likelihood logístico
+  }
+}
