@@ -1,13 +1,13 @@
 library(dplyr)
 library(ggplot2)
 library(readxl)
+library(HDInterval)
+library(rstan)
 Microdatos_encuesta_de_percepción_MCV_y_diccionario_de_datos <- read_excel("Microdatos encuesta de percepción MCV y diccionario de datos.xlsx")
-View(Microdatos_encuesta_de_percepción_MCV_y_diccionario_de_datos)
+
 datos <- Microdatos_encuesta_de_percepción_MCV_y_diccionario_de_datos[,c(10,11,13,16,557)]
 
-# 10: Comuna, 11: Sexo, 13: Edad, 16: Estrato, 557: Vulnerabilidad, 256: Tiempo de viaje al trabajo, 242: # de libros leidos
-
-head(datos)
+# 10: Comuna, 11: Sexo, 13: Edad, 16: Estrato, 557: Vulnerabilidad
 
 Comuna <- datos$Q6
 Sexo <- datos$CS1
@@ -15,40 +15,21 @@ Edad <- datos$CS2
 Estrato <- datos$CCS2
 Vulnerabilidad <- datos$RVE5
 
-library(rstan)
 
-# Modelo de regresión logística bayesiana
-modelo <- "
-data {
-  int<lower=0> N; // Número de observaciones
-  int<lower=0> K; // Número de variables predictoras
-  matrix[N, K] X; // Matriz de variables predictoras
-  int<lower=0, upper=1> y[N]; // Variable respuesta binaria
-}
-
-parameters {
-  vector[K] beta; // Coeficientes de regresión
-}
-
-model {
-  // Prior
-  beta ~ normal(0, 5); // Prior normal para los coeficientes
-
-  // Likelihood
-  for (i in 1:N) {
-    y[i] ~ bernoulli_logit(X[i,] * beta); // Likelihood logístico
-  }
-}
-"
 # Codificar Vulnerabilidad y Sexo como 0 y 1
 Vulnerabilidad <- ifelse(Vulnerabilidad == 1, 0, 1)
 Sexo <- ifelse(Sexo == 1, 0, 1)
 
+# se convierten las variables que son categoricas en factor
+x1 <- as.factor(Comuna)
+x2 <- as.factor(Sexo)
+x3 <- Edad
+x4 <- as.factor(Estrato)
 
 # Prepara los datos para el modelo
 N <- nrow(datos)
 K <- 4  # Número de variables predictoras en tus datos
-X <- as.matrix(datos[, 2:(K+1)])  #Matriz de datos predictores
+X <- model.matrix(~ x1 + x2 + x3 + x4)  #Matriz de datos predictores
 y <- as.vector(Vulnerabilidad)
 
 stan_data <- list(
@@ -61,15 +42,7 @@ stan_data <- list(
 fit <- stan(file = 'modelo.stan',
             data = stan_data, chains = 4, iter = 2000)
 
-'# Compilar el modelo
-modelo_compilado <- stan_model(model_code = modelo)
-
-# Ajustar el modelo a los datos
-ajuste <- sampling(modelo_compilado, data = list(N = N, K = K, X = X, y = y))
-
-# Resumen del ajuste
-summary(ajuste)'
-summary(fit)
+print(fit) #Resumen del modelo, verificando Rhat
 
 traceplot(fit)
 
