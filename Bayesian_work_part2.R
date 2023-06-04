@@ -4,7 +4,6 @@ library(readxl)
 library(HDInterval)
 library(rstan)
 Microdatos_encuesta_de_percepción_MCV_y_diccionario_de_datos <- read_excel("Microdatos encuesta de percepción MCV y diccionario de datos.xlsx")
-
 datos <- Microdatos_encuesta_de_percepción_MCV_y_diccionario_de_datos[,c(10,11,13,16,557)]
 
 # 10: Comuna, 11: Sexo, 13: Edad, 16: Estrato, 557: Vulnerabilidad
@@ -52,22 +51,162 @@ Sigma.poste = extract(fit2, pars = "sigma2")
 Sigma.poste = Sigma.poste[[1]]
 
 
-# Obtener los coeficientes de regresión y los intervalos de credibilidad
-coeficients <- extract(fit, "beta")$beta
-lower_ci <- apply(coeficients, 2, quantile, prob = 0.025)
-upper_ci <- apply(coeficients, 2, quantile, prob = 0.975)
+## Graficos HDI para los Beta's
+# Para los primeros 6 Beta's (1,6)
 
-# Crear un data frame con los coeficientes y los intervalos de credibilidad
-df <- data.frame(Coeficiente = colnames(coeficients),
-                 Valor = colMeans(coeficients),
-                 Lower_CI = lower_ci,
-                 Upper_CI = upper_ci)
+dev.new()
+# Dimensiones de la pantalla
+screen_width <- 1920
+screen_height <- 1080
 
-# Graficar los coeficientes de regresión con intervalos de credibilidad
-ggplot(df, aes(x = Coeficiente, y = Valor, ymin = Lower_CI, ymax = Upper_CI)) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
-  geom_pointrange() +
-  xlab("Variable Predictora") +
-  ylab("Coeficiente") +
-  ggtitle("Coeficientes de Regresión con Intervalos de Credibilidad") +
-  theme_bw()
+# Número de gráficas
+num_graphs <- 6
+
+# Calcula el número de filas y columnas
+num_rows <- floor(sqrt(num_graphs))
+num_cols <- ceiling(num_graphs / num_rows)
+
+# Calcula el ancho y la altura de cada gráfica
+graph_width <- floor(screen_width / num_cols)
+graph_height <- floor(screen_height / num_rows)
+
+# Establece el tamaño del área de trazado
+par(oma = c(0, 0, 0, 0))  # Margen exterior
+par(mfrow = c(num_rows, num_cols))
+for(i in 1:6){
+  #Inicio
+  HDI.interval.beta <- hdi(Beta.poste[,i])
+  value1 <- HDI.interval.beta[1]
+  value2 <- HDI.interval.beta[2]
+  DENSITITY.BETA <- density(Beta.poste[,i])
+  plot(DENSITITY.BETA, main = "Densidad Posterior", xlab = parse(text=(paste0("beta[",i,"]"))))
+  DENSITITY.BETAy <- DENSITITY.BETA$y
+  DENSITITY.BETAx <- DENSITITY.BETA$x
+  # Lower and higher indices on the X-axis
+  l <- min(which(DENSITITY.BETAx >= value1))
+  h <- max(which(DENSITITY.BETAx < value2))
+  
+  polygon(c(DENSITITY.BETAx[c(l, l:h, h)]),
+          c(0, DENSITITY.BETAy[l:h], 0),
+          col = "slateblue1")
+  #Fin
+}
+
+# Para los siguientes Beta's (7,12)
+dev.new()
+# Dimensiones de la pantalla
+screen_width <- 1920
+screen_height <- 1080
+
+# Número de gráficas
+num_graphs <- 6
+
+# Calcula el número de filas y columnas
+num_rows <- floor(sqrt(num_graphs))
+num_cols <- ceiling(num_graphs / num_rows)
+
+# Calcula el ancho y la altura de cada gráfica
+graph_width <- floor(screen_width / num_cols)
+graph_height <- floor(screen_height / num_rows)
+
+# Establece el tamaño del área de trazado
+par(oma = c(0, 0, 0, 0))  # Margen exterior
+par(mfrow = c(num_rows, num_cols))
+for(i in 7:13){
+  #Inicio
+  HDI.interval.beta <- hdi(Beta.poste[,i])
+  value1 <- HDI.interval.beta[1]
+  value2 <- HDI.interval.beta[2]
+  DENSITITY.BETA <- density(Beta.poste[,i])
+  plot(DENSITITY.BETA, main = "Densidad Posterior", xlab = parse(text=(paste0("beta[",i,"]"))))
+  DENSITITY.BETAy <- DENSITITY.BETA$y
+  DENSITITY.BETAx <- DENSITITY.BETA$x
+  # Lower and higher indices on the X-axis
+  l <- min(which(DENSITITY.BETAx >= value1))
+  h <- max(which(DENSITITY.BETAx < value2))
+  
+  polygon(c(DENSITITY.BETAx[c(l, l:h, h)]),
+          c(0, DENSITITY.BETAy[l:h], 0),
+          col = "slateblue1")
+  #Fin
+}
+
+# Para los siguientes 6 Beta's (13, 18)
+dev.new()
+# Dimensiones de la pantalla
+screen_width <- 1920
+screen_height <- 1080
+
+# Número de gráficas
+num_graphs <- 6
+
+# Calcula el número de filas y columnas
+num_rows <- floor(sqrt(num_graphs))
+num_cols <- ceiling(num_graphs / num_rows)
+
+# Calcula el ancho y la altura de cada gráfica
+graph_width <- floor(screen_width / num_cols)
+graph_height <- floor(screen_height / num_rows)
+
+# Establece el tamaño del área de trazado
+par(oma = c(0, 0, 0, 0))  # Margen exterior
+par(mfrow = c(num_rows, num_cols))
+for(i in 13:18){
+  #Inicio
+  HDI.interval.beta <- hdi(Beta.poste[,i])
+  value1 <- HDI.interval.beta[1]
+  value2 <- HDI.interval.beta[2]
+  DENSITITY.BETA <- density(Beta.poste[,i])
+  plot(DENSITITY.BETA, main = "Densidad Posterior", xlab = parse(text=(paste0("beta[",i,"]"))))
+  DENSITITY.BETAy <- DENSITITY.BETA$y
+  DENSITITY.BETAx <- DENSITITY.BETA$x
+  # Lower and higher indices on the X-axis
+  l <- min(which(DENSITITY.BETAx >= value1))
+  h <- max(which(DENSITITY.BETAx < value2))
+  
+  polygon(c(DENSITITY.BETAx[c(l, l:h, h)]),
+          c(0, DENSITITY.BETAy[l:h], 0),
+          col = "slateblue1")
+  #Fin
+}
+
+
+# Para los Beta's restantes (19, 23)
+dev.new()
+# Dimensiones de la pantalla
+screen_width <- 1920
+screen_height <- 1080
+
+# Número de gráficas
+num_graphs <- 6
+
+# Calcula el número de filas y columnas
+num_rows <- floor(sqrt(num_graphs))
+num_cols <- ceiling(num_graphs / num_rows)
+
+# Calcula el ancho y la altura de cada gráfica
+graph_width <- floor(screen_width / num_cols)
+graph_height <- floor(screen_height / num_rows)
+
+# Establece el tamaño del área de trazado
+par(oma = c(0, 0, 0, 0))  # Margen exterior
+par(mfrow = c(num_rows, num_cols))
+for(i in 19:23){
+  #Inicio
+  HDI.interval.beta <- hdi(Beta.poste[,i])
+  value1 <- HDI.interval.beta[1]
+  value2 <- HDI.interval.beta[2]
+  DENSITITY.BETA <- density(Beta.poste[,i])
+  plot(DENSITITY.BETA, main = "Densidad Posterior", xlab = parse(text=(paste0("beta[",i,"]"))))
+  DENSITITY.BETAy <- DENSITITY.BETA$y
+  DENSITITY.BETAx <- DENSITITY.BETA$x
+  # Lower and higher indices on the X-axis
+  l <- min(which(DENSITITY.BETAx >= value1))
+  h <- max(which(DENSITITY.BETAx < value2))
+  
+  polygon(c(DENSITITY.BETAx[c(l, l:h, h)]),
+          c(0, DENSITITY.BETAy[l:h], 0),
+          col = "slateblue1")
+  #Fin
+}
+
