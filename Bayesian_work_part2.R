@@ -3,7 +3,9 @@ library(ggplot2)
 library(readxl)
 library(HDInterval)
 library(rstan)
+library(bayesplot)
 Microdatos_encuesta_de_percepción_MCV_y_diccionario_de_datos <- read_excel("Microdatos encuesta de percepción MCV y diccionario de datos.xlsx")
+
 datos <- Microdatos_encuesta_de_percepción_MCV_y_diccionario_de_datos[,c(10,11,13,16,557)]
 
 # 10: Comuna, 11: Sexo, 13: Edad, 16: Estrato, 557: Vulnerabilidad
@@ -19,7 +21,6 @@ Vulnerabilidad <- datos$RVE5
 Vulnerabilidad <- ifelse(Vulnerabilidad == 1, 0, 1)
 Sexo <- ifelse(Sexo == 1, 0, 1)
 
-# se convierten las variables que son categoricas en factor
 x1 <- as.factor(Comuna)
 x2 <- as.factor(Sexo)
 x3 <- Edad
@@ -43,13 +44,13 @@ fit <- stan(file = 'modelo.stan',
 
 print(fit) #Resumen del modelo, verificando Rhat
 
-traceplot(fit)
+traceplot(fit) # Para ver como las cadenas oscilan entorno a los mismos valores
 
-Beta.poste  = extract(modelo, pars = "beta")
-Beta.poste  = Beta.poste[[1]]
-Sigma.poste = extract(fit2, pars = "sigma2")
-Sigma.poste = Sigma.poste[[1]]
+Beta.poste  <- extract(fit, pars = "beta")
+Beta.poste  <- Beta.poste[[1]]
 
+mcmc_dens(fit)
+mcmc_dens_overlay(fit)
 
 ## Graficos HDI para los Beta's
 # Para los primeros 6 Beta's (1,6)
@@ -88,7 +89,7 @@ for(i in 1:6){
   
   polygon(c(DENSITITY.BETAx[c(l, l:h, h)]),
           c(0, DENSITITY.BETAy[l:h], 0),
-          col = "slateblue1")
+          col = "#95D5B2")
   #Fin
 }
 
@@ -112,7 +113,7 @@ graph_height <- floor(screen_height / num_rows)
 # Establece el tamaño del área de trazado
 par(oma = c(0, 0, 0, 0))  # Margen exterior
 par(mfrow = c(num_rows, num_cols))
-for(i in 7:13){
+for(i in 7:12){
   #Inicio
   HDI.interval.beta <- hdi(Beta.poste[,i])
   value1 <- HDI.interval.beta[1]
@@ -127,7 +128,7 @@ for(i in 7:13){
   
   polygon(c(DENSITITY.BETAx[c(l, l:h, h)]),
           c(0, DENSITITY.BETAy[l:h], 0),
-          col = "slateblue1")
+          col = "#95D5B2")
   #Fin
 }
 
@@ -166,7 +167,7 @@ for(i in 13:18){
   
   polygon(c(DENSITITY.BETAx[c(l, l:h, h)]),
           c(0, DENSITITY.BETAy[l:h], 0),
-          col = "slateblue1")
+          col = "#95D5B2")
   #Fin
 }
 
@@ -206,7 +207,6 @@ for(i in 19:23){
   
   polygon(c(DENSITITY.BETAx[c(l, l:h, h)]),
           c(0, DENSITITY.BETAy[l:h], 0),
-          col = "slateblue1")
+          col = "#95D5B2")
   #Fin
 }
-
