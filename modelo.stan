@@ -11,10 +11,8 @@ parameters {
 
 model {
   // Prior
-  beta ~ normal(0, 5); // Prior normal para los coeficientes
+  beta ~ normal(0, 100); // Prior normal para los coeficientes
 
   // Likelihood
-  for (i in 1:N) {
-    y[i] ~ bernoulli_logit(X[i,] * beta); // Likelihood logístico
-  }
+  y ~ bernoulli_logit(X * beta); // Likelihood logístico
 }
