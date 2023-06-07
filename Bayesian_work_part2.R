@@ -171,7 +171,6 @@ for(i in 13:18){
   #Fin
 }
 
-
 # Para los Beta's restantes (19, 23)
 dev.new()
 # Dimensiones de la pantalla
@@ -210,3 +209,47 @@ for(i in 19:23){
           col = "#95D5B2")
   #Fin
 }
+
+# Curva ROC
+# Extrayendo la medias y guardandolas en una matriz
+samples <- extract(fit)
+mcp <- colMeans(samples$beta)
+cp <- matrix(mcp, ncol = 1)
+
+# Haciendo el modelo para calcular el ROC
+XP <- model.matrix(y~x1+x2+x3+x4, data = datos)
+pred <- plogis(XP %*% cp)
+cr <- roc(Vulnerabilidad, pred)
+
+# Graficando el ROC
+plot(cr, main = "Curva ROC", xlab = "Tasa de Falsos Positivos", ylab = "Tasa de Verdaderos Positivos")
+
+# Area bajo la curva ROC (AUC)
+auc <- auc(cr)
+
+# Metodo del Factor de Bayes
+verosimilitud = function(Beta, X, y){  
+  res = ( (exp(X%*%Beta)/(1+exp(X%*%Beta)) )^y) * (( 1/(1+exp(X%*%Beta))  )^(1-y))
+  return(res)
+}
+
+#modelo 1
+X1 = model.matrix(~ x1 )
+#modelos 2
+X2 = model.matrix(~ x1 + x2 + x3)
+
+#posterior modelo 1
+Beta.simu.poste.M1 = extract(fit2, "beta")
+Beta.simu.poste.M1 = Beta.simu.poste.M1[[1]]
+dim(Beta.simu.poste.M1)
+#posterior modelo 2
+Beta.simu.poste.M2 = extract(fit, "beta")
+Beta.simu.poste.M2 = Beta.simu.poste.M2[[1]]
+dim(Beta.simu.poste.M2)
+#Verosimilitud marginal modelo 1
+vero.marginal1 = mean(sapply(1:dim(Beta.simu.poste.M1)[1], function(j) exp(sum(log(sapply(1:length(y), function(i){verosimilitud(Beta.simu.poste.M1[j,], X1[i,], y[i])}))))))
+
+#Verosimilitud marginal modelo 2
+vero.marginal2 = mean(sapply(1:dim(Beta.simu.poste.M2)[1], function(j) exp(sum(log(sapply(1:length(y), function(i){verosimilitud(Beta.simu.poste.M2[j,], X2[i,], y[i])}))))))
+
+B12 = vero.marginal1/vero.marginal2
