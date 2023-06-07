@@ -40,7 +40,7 @@ stan_data <- list(
 )
 
 fit <- stan(file = 'modelo.stan',
-            data = stan_data, chains = 4, iter = 2000)
+            data = stan_data, chains = 3, iter = 10000)
 
 print(fit) #Resumen del modelo, verificando Rhat
 
