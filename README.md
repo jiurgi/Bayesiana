@@ -1,4 +1,4 @@
-# Bayesiana
+# Modelo de regresión logística para encuesta de percepción ciudadana
 
 Este proyecto es un trabajo realizado para la materia de Estadística Bayesiana de la Universidad Nacional.
 
