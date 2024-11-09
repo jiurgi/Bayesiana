@@ -2,7 +2,7 @@
 
 Este proyecto es un trabajo realizado para la materia de Estadística Bayesiana de la Universidad Nacional.
 
-Consiste en realizar un estudio acerca de la encuesta de percepción ciudadana realizada en la ciudad de Medellín, para identificar posibles relaciones entre sus respuestas y su vulnerabilidad.
+Consiste en realizar un estudio acerca de la encuesta de percepción ciudadana realizada en la ciudad de Medellín con 1616 respuestas, para identificar posibles relaciones entre sus respuestas y su vulnerabilidad.
 
 El trabajo esta divido en dos partes:
 - La primera parte es todo lo relacionado con la primera entrega: su analisis descriptivo, diapositivas y base de datos. Todo esto se puede encontrar en el archivo "Bayesian_work_part1"
